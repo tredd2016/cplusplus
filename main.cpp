@@ -1,19 +1,28 @@
 /**
 	* Author:	Tyler Redd
 	* Email:	tredd2012@gmail.com
-	* Created:	10/06/2015
+	* Created:	09/30/2015
 
 	*Purpose:
 		This program implements a simple Caesar Cipher system for encrypting and
 		decrypting plain text. 
 		
 		More info: https://en.wikipedia.org/wiki/Caesar_cipher
+		
+		// -------------------LEGAL-------------------------------------------------------------------------------------------------------------------
+
+		Copyright (c) 2015, Tyler Redd
+
+		Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby 
+		granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+		THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED 
+		WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL 
+		DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS 
+		ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE
+
 */ 
 
-/*
-Bugs: Decryting as a whole and spaces
-
-*/
 
 
 #include<iostream>
@@ -39,7 +48,10 @@ string encrypt(string plain_text, int key){
 	vector<int> position_vec = char_position(plain_text); // represent string as numbers
 	
 	for(int i=0; i<position_vec.size(); ++i){
-		position_vec[i] = ((position_vec[i] + key) % 26); // preform the shift
+		// [space] - 'a' = -65 -- we don't want to encrypt spaces 
+		if(position_vec[i] != -65){ 
+			position_vec[i] = ((position_vec[i] + key) % 26); // preform the shift
+		}
 	}
 
 	// re-assemble string
@@ -55,7 +67,14 @@ string decrypt(string encrypted, int key){
 	vector<int> position_vec = char_position(encrypted); // represent string as numbers
 
 	for(int i=0; i<position_vec.size(); ++i){
-		position_vec[i] = ((position_vec[i] - key) % 26); // reverse the shift
+		// [space] - 'a' = -65 -- we don't want to encrypt spaces 
+		if(position_vec[i] != -65){
+			position_vec[i] = ((position_vec[i] - key) % 26); // reverse the shift
+			// Wrap arround -- avoid negative values
+			if(position_vec[i] < 0){
+				position_vec[i] = 26 + position_vec[i];
+			}
+		}
 	} 
 
 	// re-assemble string
@@ -80,15 +99,20 @@ int main(){
 		cout << "1. Encrypt" << endl << "2. Decrpyt" << endl << "3. Exit" << endl; 
 		cout << "Choice: ";
 		cin >> choice; 
+		cin.clear();
+		cin.ignore(10000, '\n');
 
 		switch (choice)
 		{
 		case 1:
 			{
 				cout << "Enter the string to encrypt: " << endl; 
-				cin >> input_str;
+				getline(cin, input_str);
 				cout << "Enter the encryption key: " << endl; 
 				cin >> key; 
+				cin.clear();
+				cin.ignore(10000, '\n');
+
 				string encrypted = encrypt(input_str, key);
 				cout << "The encrypted message is: " << endl; 
 				cout << encrypted << endl << endl;
@@ -98,9 +122,11 @@ int main(){
 		case 2:
 			{
 				cout << "Enter the string to decrypt: " << endl; 
-				cin >> input_str;
+				getline(cin, input_str);
 				cout << "Enter the encryption key: " << endl; 
 				cin >> key; 
+				cin.clear();
+				cin.ignore(10000, '\n');
 
 				string decrypted = decrypt(input_str, key);
 				cout << "The decrypted message is: " << endl;
